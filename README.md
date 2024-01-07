@@ -1,79 +1,73 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+## C1 Answer
 
-# Getting Started
+1. Menggunakan DB yang dicaching yang dirunning saat pertama kali user mendaftarkan di diri di background dan  mungkin diupdate sebulan sekali
+2. Jika tidak ada pengguna terkait atau terkoneksi maka bisa kita tambahkan variabel kedalam logic sehingga akan semakin lebih luas atau jika tidak ada juga
+   kita bisa menambahkan seperti lokasi yang sama atau kantor yang sama atau jika tidak terpenuhi apapun bisa kita sarankan orang random dalam aplikasi kita
+   , jika terlalu banyak maka bisa menggunakan logic checklist variabel dimana semakin banyak checklist yang terpenuhi maka orang tersebut akan semakin 
+   terekomendasikan dan dibuat hirarki dimana suggestion nya dari yang paling banyak terpenuhi hingga ke yang paling sedikit
+3. Cara menguji fiture tersebut bisa menggunakan data dummy dimana kita membuat hirarki yang memiliki kesamaan dari user profile kita ke yang paling sedikit
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+## C2 Answer
 
-## Step 1: Start the Metro Server
+class User:
+    def __init__(self, name, school, friends, family, hobbies):
+        self.name = name
+        self.school = school
+        self.friends = friends
+        self.family = family
+        self.hobbies = hobbies
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+def calculate_similarity(user1, user2):
+    # Define weights for each variable
+    weights = {
+        'school': 3,
+        'friends': 2,
+        'family': 2,
+        'hobbies': 1
+    }
 
-To start Metro, run the following command from the _root_ of your React Native project:
+    # Calculate similarity scores for each variable
+    school_score = int(user1.school == user2.school)
+    friends_score = len(set(user1.friends) & set(user2.friends))
+    family_score = int(user1.family == user2.family)
+    hobbies_score = len(set(user1.hobbies) & set(user2.hobbies))
 
-```bash
-# using npm
-npm start
+    # Calculate the overall similarity score
+    total_score = (
+        weights['school'] * school_score +
+        weights['friends'] * friends_score +
+        weights['family'] * family_score +
+        weights['hobbies'] * hobbies_score
+    )
 
-# OR using Yarn
-yarn start
-```
+    return total_score
 
-## Step 2: Start your Application
+def suggest_users(current_user, all_users):
+    # Calculate similarity scores for all users
+    similarity_scores = [(user, calculate_similarity(current_user, user)) for user in all_users]
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+    # Sort users based on similarity scores in descending order
+    sorted_users = sorted(similarity_scores, key=lambda x: x[1], reverse=True)
 
-### For Android
+    # Return the sorted list of suggested users
+    return [user[0] for user in sorted_users]
 
-```bash
-# using npm
-npm run android
+# Example Usage:
+# Define users
+user1 = User('Alice', 'School1', ['Bob', 'Charlie'], 'Family1', ['Reading', 'Painting'])
+user2 = User('Bob', 'School1', ['Alice', 'Charlie'], 'Family2', ['Painting', 'Coding'])
+user3 = User('Charlie', 'School2', ['Alice', 'Bob'], 'Family1', ['Coding', 'Hiking'])
 
-# OR using Yarn
-yarn android
-```
+# Define the current user
+current_user = User('David', 'School1', ['Eva', 'Frank'], 'Family2', ['Reading', 'Coding'])
 
-### For iOS
+# Create a list of all users
+all_users = [user1, user2, user3]
 
-```bash
-# using npm
-npm run ios
+# Get suggested users for the current user
+suggested_users = suggest_users(current_user, all_users)
 
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
-
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
-
-## Step 3: Modifying your App
-
-Now that you have successfully run the app, let's modify it.
-
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
-
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+# Print the suggested users
+print("Suggested Users:")
+for user in suggested_users:
+    print(user.name)
